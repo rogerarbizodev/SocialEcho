@@ -2,6 +2,7 @@ import React from "react";
 import { MdOutlineReport } from "react-icons/md";
 import { deletePostAction } from "../../actions/postActions";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import Like from "./Like";
 import {
   HiOutlineChatBubbleOvalLeft,
@@ -10,8 +11,8 @@ import {
 const Post = ({ post }) => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth?.userData);
-  const { body, fileUrl, user, community, createdAt } = post;
-  const deleteHandler = () => {
+  const { body, fileUrl, user, community, createdAt, comments } = post;
+  const deleteHandler = (e) => {
     dispatch(deletePostAction(post._id));
   };
 
@@ -33,51 +34,55 @@ const Post = ({ post }) => {
         </div>
         <p>{createdAt}</p>
       </div>
-
       <div>
-        <p className="text-lg">{body}</p>
-        <div className="flex justify-center">
-          {fileUrl && (
-            <img
-              className="w-[800px] h-auto rounded-xl mt-3"
-              src={fileUrl}
-              alt={body}
-              loading="lazy"
-            />
-          )}
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-2">
-            {/* like button here */}
-            <Like post={post} />
-            <button className="flex items-center text-xl gap-1">
-              {" "}
-              <HiOutlineChatBubbleOvalLeft /> 0
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center text-xl gap-1">
-              {" "}
-              <HiOutlineBookmarkSquare />
-              Save
-            </button>
-            <button className="flex items-center text-xl gap-1">
-              {" "}
-              <MdOutlineReport />
-              Report
-            </button>
-
-            {userData?.id === post.user._id && (
-              <button
-                onClick={deleteHandler}
-                className="flex items-center text-xl gap-1"
-              >
-                <MdOutlineReport />
-                Delete
-              </button>
+        <Link to={`/post/${post._id}`}>
+          <p className="text-lg">{body}</p>
+          <div className="flex justify-center">
+            {fileUrl && (
+              <img
+                className="w-[800px] h-auto rounded-xl mt-3"
+                src={fileUrl}
+                alt={body}
+                loading="lazy"
+              />
             )}
           </div>
+        </Link>
+      </div>
+
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center gap-2">
+          {/* like button here */}
+          <Like post={post} />
+          <Link to={`/post/${post._id}`}>
+            <button className="flex items-center text-xl gap-1">
+              {" "}
+              <HiOutlineChatBubbleOvalLeft />
+              {comments.length}
+            </button>
+          </Link>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="flex items-center text-xl gap-1">
+            {" "}
+            <HiOutlineBookmarkSquare />
+            Save
+          </button>
+          <button className="flex items-center text-xl gap-1">
+            {" "}
+            <MdOutlineReport />
+            Report
+          </button>
+
+          {userData?.id === post.user._id && (
+            <button
+              onClick={deleteHandler}
+              className="flex items-center text-xl gap-1"
+            >
+              <MdOutlineReport />
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </div>
