@@ -11,12 +11,23 @@ import PostPage from "./pages/PostPage";
 import ReportPost from "./components/community/ReportPost";
 import ReportedPostPage from "./pages/ReportedPostPage";
 import Saved from "./pages/Saved";
+import EditProfileForm from "./components/form/EditProfileForm";
+import PublicProfilePage from "./pages/PublicProfilePage";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import AllCommunities from "./pages/AllCommunities";
+import MyCommunities from "./pages/MyCommunities";
+import Following from "./pages/Following";
 const App = () => {
+  const user = useSelector((state) => state.auth.userData);
   return (
-    <div className="bg-[#f6f7f9]">
+    <div>
       <Routes>
         <Route path="/signup" element={<SignupForm />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route
+          path="/signin"
+          element={user ? <Navigate to="/" /> : <SignIn />}
+        />
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
@@ -36,6 +47,11 @@ const App = () => {
             element={<Moderator />}
           />
           <Route path="/saved" element={<Saved />} />
+          <Route path="/edit-profile" element={<EditProfileForm />} />
+          <Route path="/user/:userId" element={<PublicProfilePage />} />
+          <Route path="/communities" element={<AllCommunities />} />
+          <Route path="/my-communities" element={<MyCommunities />} />
+          <Route path="/following" element={<Following />} />
         </Route>
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
