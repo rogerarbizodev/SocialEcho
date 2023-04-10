@@ -12,7 +12,6 @@ const userContextSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
     ip: {
       type: String,
       required: true,
@@ -32,12 +31,6 @@ const userContextSchema = new mongoose.Schema(
       get: decryptField,
     },
     browser: {
-      type: String,
-      required: true,
-      set: encryptField,
-      get: decryptField,
-    },
-    version: {
       type: String,
       required: true,
       set: encryptField,
@@ -66,6 +59,11 @@ const userContextSchema = new mongoose.Schema(
       required: true,
       set: encryptField,
       get: decryptField,
+    },
+    isTrusted: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
   },
   {
