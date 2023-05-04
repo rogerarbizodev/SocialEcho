@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { signUpAction } from "../../redux/actions/authActions";
+import { signUpAction } from "../redux/actions/authActions";
 import { Link } from "react-router-dom";
-import ContextAuthModal from "../modals/ContextAuthModal";
-import LoadingSpinner from "../loader/ButtonLoadingSpinner";
+import ContextAuthModal from "../components/modals/ContextAuthModal";
+import LoadingSpinner from "../components/loader/ButtonLoadingSpinner";
 
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ const SignupForm = () => {
     formData.append("password", password);
     formData.append("avatar", avatar);
     formData.append("role", "general");
-    formData.append("isConsentGiven", isConsentGiven);
+    formData.append("isConsentGiven", isConsentGiven.toString());
     await dispatch(signUpAction(formData, navigate, isConsentGiven, email));
     setLoading(false);
     setIsConsentGiven(false);

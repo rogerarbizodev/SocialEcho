@@ -7,6 +7,7 @@ const postRoutes = require("./routes/post.route");
 const communityRoutes = require("./routes/community.route");
 const contextAuthRoutes = require("./routes/context-auth.route");
 const search = require("./controllers/search.controller");
+const Database = require("./config/database");
 
 const app = express();
 
@@ -14,7 +15,6 @@ const cors = require("cors");
 const morgan = require("morgan");
 const passport = require("passport");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
 
 const {
   notFoundHandler,
@@ -23,22 +23,14 @@ const {
 
 const PORT = process.env.PORT || 5000;
 
-mongoose.set("strictQuery", false);
+const db = new Database(process.env.DB_CONNECT, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-// Connect to DB
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.DB_CONNECT, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Connected to DB!");
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-connectDB();
+db.connect().catch((err) =>
+  console.error("Error connecting to database:", err)
+);
 
 // use middlewares
 app.use(cors());
@@ -53,7 +45,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 require("./config/passport.js");
-const postController = require("./controllers/post.controller");
 
 //routes
 app.get("/check-connectivity", (req, res) => {
@@ -73,5 +64,16 @@ app.use(notFoundHandler);
 
 // common error handler
 app.use(errorHandler);
+
+process.on("SIGINT", async () => {
+  try {
+    await db.disconnect();
+    console.log("Disconnected from database.");
+    process.exit(0);
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+});
 
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}!`));
